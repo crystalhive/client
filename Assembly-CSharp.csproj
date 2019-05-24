@@ -62,15 +62,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Card.cs" />
-    <Compile Include="Assets\Scripts\CardTemplate.cs" />
-    <Compile Include="Assets\Scripts\CardType.cs" />
+    <Compile Include="Assets\Scripts\Cards\Card.cs" />
+    <Compile Include="Assets\Scripts\Cards\CardTemplate.cs" />
+    <Compile Include="Assets\Scripts\Cards\CardType.cs" />
+    <Compile Include="Assets\Scripts\Cards\House.cs" />
+    <Compile Include="Assets\Scripts\Cards\Set.cs" />
     <Compile Include="Assets\Scripts\Effects\EffectScope.cs" />
     <Compile Include="Assets\Scripts\Effects\IEffect.cs" />
     <Compile Include="Assets\Scripts\Game.cs" />
-    <Compile Include="Assets\Scripts\House.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
-    <Compile Include="Assets\Scripts\Set.cs" />
     <Compile Include="Assets\Scripts\Utils\TokenHelper.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>/Users/brandonbuck/Dev/unity/CrystalHive/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>

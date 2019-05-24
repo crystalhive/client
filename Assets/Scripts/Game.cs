@@ -50,8 +50,8 @@ namespace CrystalHive
         private int playerKeyCost = DefaultKeyCost;
         private int opponentKeyCost = DefaultKeyCost;
 
-        private readonly List<IEffect> constantEffects;
-        private readonly List<IEffect> turnEffects;
+        private readonly List<IEffect> constantEffects = new List<IEffect>();
+        private readonly List<IEffect> turnEffects = new List<IEffect>();
 
         #endregion private properties
 
@@ -96,7 +96,14 @@ namespace CrystalHive
 
         public void EndTurn()
         {
-            PlayerDesignator activePlayer = _activePlayer;
+            if (_activePlayer == PlayerDesignator.Player)
+            {
+                _activePlayer = PlayerDesignator.Opponent;
+            }
+            else
+            {
+                _activePlayer = PlayerDesignator.Opponent;
+            }
 
         }
 

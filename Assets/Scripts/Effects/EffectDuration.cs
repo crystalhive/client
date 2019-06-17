@@ -2,10 +2,11 @@
 {
     namespace Effects
     {
-        public enum EffectsScope
+        public enum EffectsDuration
         {
             Game,
-            Turn
+            Turn,
+            Once
         }
     }
 }

@@ -1,30 +1,40 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using CrystalHive.Effects;
 
-namespace CrystalHive
+namespace CrystalHive.Cards
 {
-    namespace Cards
+    [CreateAssetMenu(fileName = "CardTemplate", menuName = "Resources/Card Template")]
+    public class CardTemplate : ScriptableObject
     {
-        [CreateAssetMenu(fileName = "CardTemplate", menuName = "Resources/Card Template")]
-        public class CardTemplate : ScriptableObject
-        {
-            #region public properties
+        #region public properties
 
-            public int CardNumber;
-            public Set Set;
+        public int CardNumber;
+        public Set Set;
 
-            public string Name;
+        public string Name;
 
-            [SerializeField]
-            public House House;
+        [SerializeField]
+        public House House;
 
-            public int AemberBonus;
+        public int AemberBonus;
 
-            [TextArea]
-            public string FlavorText;
+        [TextArea]
+        public string FlavorText;
 
-            #endregion public properties
-        }
-    }
+		#endregion public properties
+
+		#region public properties
+
+		public IEffect Constant { get; set; }
+
+		public IEffect Action { get; set; }
+		public IEffect Fight { get; set; }
+		public IEffect Reap { get; set; }
+
+		public IEffect Play { get; set; }
+		public IEffect Destroyed { get; set; }
+		public IEffect LeavesPlay { get; set; }
+
+		#endregion public properties
+	}
 }

@@ -12,15 +12,18 @@ namespace CrystalHive
             Yellow
         }
 
-        #region static properties
 
-        private static readonly Key[] KeyForgeOrder = { Key.Red, Key.Blue, Key.Yellow };
+		#region static properties
 
-        #endregion static properties
+		private static readonly Key[] KeyForgeOrder = { Key.Red, Key.Blue, Key.Yellow };
 
-        #region properties
+		#endregion static properties
 
-        private HashSet<Key> forgedKeys = new HashSet<Key>();
+		#region public properties
+
+		public PlayerDesignator Designator { get; set; }
+
+		private HashSet<Key> forgedKeys = new HashSet<Key>();
 
         public bool RedKeyForged
         {
@@ -48,7 +51,7 @@ namespace CrystalHive
 
         public int Aember { get; private set; } = 0;
 
-        #endregion properties
+        #endregion public properties
 
         #region lifecycle methods
 
@@ -68,7 +71,7 @@ namespace CrystalHive
 
         public bool ForgeKey()
         {
-            int keyCost = Game.Instance.GetCurrentKeyCost(this);
+            int keyCost = Game.Instance.GetCurrentKeyCost(Designator);
             if (Aember >= keyCost)
             {
                 RemoveAember(keyCost);
@@ -84,7 +87,7 @@ namespace CrystalHive
 
         public void AddAember(int count)
         {
-            Aember += 1;
+            Aember += count;
         }
 
         public void RemoveAember(int count)

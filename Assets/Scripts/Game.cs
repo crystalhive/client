@@ -1,123 +1,129 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using CrystalHive.Effects;
+using CrystalHive.Cards;
 
 namespace CrystalHive
 {
-    public class Game : MonoBehaviour
-    {
-        public enum PlayerDesignator
-        {
-            Unset,
-            Player,
-            Opponent
-        }
+	public class Game : MonoBehaviour
+	{
 
-        #region static properties
+		#region static properties
 
-        public static Game Instance { get; private set; }
+		public static Game Instance { get; private set; }
 
-        public static readonly int DefaultKeyCost = 6;
+		public static readonly int DefaultKeyCost = 6;
 
-        #endregion static properties
+		#endregion static properties
 
-        #region public properties
+		#region public properties
 
-        public Player Player { get; private set; }
-        public Player Opponent { get; private set; }
+		public Player Player { get; private set; }
+		public Player Opponent { get; private set; }
 
-        private PlayerDesignator _activePlayer = PlayerDesignator.Unset;
-        public Player ActivePlayer
-        {
-            get
-            {
-                switch (_activePlayer)
-                {
-                    case PlayerDesignator.Player:
-                        return Player;
-                    case PlayerDesignator.Opponent:
-                        return Opponent;
-                    default:
-                        return null;
-                }
-            }
-        }
+		public PlayerDesignator ActivePlayerDesignator { get; private set; } = PlayerDesignator.Unset;
 
-        #endregion public properties
+		public Player ActivePlayer
+		{
+			get
+			{
+				switch (ActivePlayerDesignator)
+				{
+					case PlayerDesignator.Player:
+						return Player;
+					case PlayerDesignator.Opponent:
+						return Opponent;
+					default:
+						return null;
+				}
+			}
+		}
 
-        #region private properties
+		#endregion public properties
 
-        private int playerKeyCost = DefaultKeyCost;
-        private int opponentKeyCost = DefaultKeyCost;
+		#region private properties
 
-        private readonly List<IEffect> constantEffects = new List<IEffect>();
-        private readonly List<IEffect> turnEffects = new List<IEffect>();
+		private int playerKeyCost = DefaultKeyCost;
+		private int opponentKeyCost = DefaultKeyCost;
 
-        #endregion private properties
+		private readonly List<IEffect> constantEffects = new List<IEffect>();
+		private readonly List<IEffect> turnEffects = new List<IEffect>();
+		private readonly List<IEffect> untilStartOfNextTurnEffects = new List<IEffect>();
 
-        #region lifecyle methods
+		#endregion private properties
 
-        void Awake()
-        {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(this, 0.1f);
-            }
-            else
-            {
-                Instance = this;
-                DontDestroyOnLoad(this);
-            }
-        }
+		#region lifecyle methods
 
-        void Start()
-        {
-            Player = CreatePlayerObject();
-            Opponent = CreatePlayerObject();
-        }
+		void Awake()
+		{
+			if (Instance != null && Instance != this)
+			{
+				Destroy(this, 0.1f);
+			}
+			else
+			{
+				Instance = this;
+			}
+		}
 
-        #endregion lifecycle methods
+		void Start()
+		{
+			Player = CreatePlayerObject(PlayerDesignator.Player);
+			Opponent = CreatePlayerObject(PlayerDesignator.Opponent);
 
-        #region private methods
+			// TODO: Move to "StartGame"
+			ActivePlayerDesignator = PlayerDesignator.Player;
+		}
 
-        Player CreatePlayerObject()
-        {
-            GameObject go = new GameObject();
-            Player player = go.AddComponent<Player>();
-            go.transform.SetParent(transform);
-            go.transform.position = Vector3.zero;
+		#endregion lifecycle methods
 
-            return player;
-        }
+		#region private methods
 
-        #endregion private methods
+		private Player CreatePlayerObject(PlayerDesignator designator)
+		{
+			GameObject go = new GameObject();
+			Player player = go.AddComponent<Player>();
+			player.Designator = designator;
 
-        #region public methods
+			go.transform.SetParent(transform);
+			go.transform.position = Vector3.zero;
 
-        public void EndTurn()
-        {
-            if (_activePlayer == PlayerDesignator.Player)
-            {
-                _activePlayer = PlayerDesignator.Opponent;
-            }
-            else
-            {
-                _activePlayer = PlayerDesignator.Opponent;
-            }
+			return player;
+		}
 
-        }
+		#endregion private methods
 
-        public void AddConstantEffect(IEffect effect)
-        {
-            effect.Apply(this);
-            constantEffects.Add(effect);
-        }
+		#region public methods
 
-        public void AddTurnEffect(IEffect effect)
-        {
-            effect.Apply(this);
-            turnEffects.Add(effect);
-        }
+		public void EndTurn()
+		{
+			if (ActivePlayerDesignator == PlayerDesignator.Player)
+			{
+				ActivePlayerDesignator = PlayerDesignator.Opponent;
+			}
+			else
+			{
+				ActivePlayerDesignator = PlayerDesignator.Player;
+			}
+
+		}
+
+		public void AddConstantEffect(IEffect effect)
+		{
+			// effect.Apply(this);
+			// constantEffects.Add(effect);
+		}
+
+		public void AddTurnEffect(IEffect effect)
+		{
+			// effect.Apply(this);
+			// turnEffects.Add(effect);
+		}
+
+		public void AddUntilStartOfNextTurnEffect(IEffect effect)
+		{
+
+		}
 
         public void RemoveConstantEffect()
         {
@@ -126,26 +132,30 @@ namespace CrystalHive
 
         public Player GetPlayerFromDesignator(PlayerDesignator designator)
         {
-            if (designator == PlayerDesignator.Opponent)
-            {
-                return Opponent;
-            }
-            else
+            if (designator == PlayerDesignator.Player)
             {
                 return Player;
             }
+            else if (designator == PlayerDesignator.Opponent)
+            {
+                return Opponent;
+            }
+
+			return null;
         }
 
-        public int GetCurrentKeyCost(Player player)
+        public int GetCurrentKeyCost(PlayerDesignator designator)
         {
-            if (player == Player)
+            if (designator == PlayerDesignator.Player)
             {
                 return playerKeyCost;
             }
-            else
+            else if (designator == PlayerDesignator.Opponent)
             {
                 return opponentKeyCost;
             }
+
+			return -1;
         }
 
         public void ModifyKeyCost(int total)
@@ -160,12 +170,31 @@ namespace CrystalHive
             {
                 playerKeyCost += total;
             }
-            else
+            else if (designator == PlayerDesignator.Opponent)
             {
                 opponentKeyCost += total;
             }
         }
 
-        #endregion public methods
-    }
+		#endregion public methods
+
+		#region card related methods
+
+		public void PlayCard(Card card)
+		{
+			if (card.Owner != ActivePlayerDesignator)
+			{
+				Debug.LogError("Non-Active Player attempted to play a card!");
+				return;
+			}
+
+			if (card.Template.Play != null)
+			{
+				Debug.Log(string.Format("Executed '{0}' effect.", card.Template.Play.Display()));
+				card.Template.Play.Apply(this, card);
+			}
+		}
+
+		#endregion card related methods
+	}
 }

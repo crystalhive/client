@@ -6,7 +6,8 @@ namespace CrystalHive
     {
         public interface IEffect
         {
-
+			void Apply(Game game, Card card);
+			string Display();
         }
     }
 }
